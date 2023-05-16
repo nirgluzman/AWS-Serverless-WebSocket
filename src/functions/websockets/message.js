@@ -22,11 +22,12 @@ exports.handler = async (event) => {
     messages.push(body.message);
 
     const data = {
-      ...record,
+      ...record.Item,
       messages,
     };
 
     await DynamoDB.write(tableName, data);
+
     return Responses._200({ message: 'got a message' });
   } catch (err) {
     console.log('DynamoDB error', err);

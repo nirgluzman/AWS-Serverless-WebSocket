@@ -4,3 +4,6 @@ https://www.youtube.com/watch?v=DzpGfyB0iKk&list=PLmexTtcbIn_gP8bpsUsHfv-58KsKPs
 
 GitHub repo:
 git@github.com:nirgluzman/AWS-Serverless-WebSocket.git
+
+Online WebSocket Tester:
+https://www.piesocket.com/websocket-tester

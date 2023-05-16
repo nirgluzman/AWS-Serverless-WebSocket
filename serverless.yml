@@ -11,13 +11,59 @@
 #
 # Happy Coding!
 
-service: websocket
+service: serverless-websocket
 
 frameworkVersion: '3'
 
 provider:
   name: aws
   region: ${opt:region, 'us-east-1'}
-  runtime: nodejs18.x
+  runtime: nodejs16.x
   profile: serverless-cli
   stage: ${opt:stage, 'dev'}
+  environment:
+    tableName: ${self:custom.tableName}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: '*'
+
+custom:
+  tableName: ${self:service}-users
+
+functions:
+  websocket-connect:
+    handler: src/functions/websockets/connect.handler
+    events:
+      - websocket:
+          route: $connect
+  websocket-disconnect:
+    handler: src/functions/websockets/disconnect.handler
+    events:
+      - websocket:
+          route: $disconnect
+  websocket-default:
+    handler: src/functions/websockets/default.handler
+    events:
+      - websocket:
+          route: $default
+  websocket-message:
+    handler: src/functions/websockets/message.handler
+    events:
+      - websocket:
+          route: message
+
+resources:
+  Resources:
+    WebsocketUserTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        AttributeDefinitions:
+          - AttributeName: ID
+            AttributeType: S
+        KeySchema:
+          - AttributeName: ID
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
